@@ -1,0 +1,12 @@
+{
+    "karan": {
+        "email": "karanthorat1@gmail.com",
+        "phone": "9685214785",
+        "password": "scrypt:32768:8:1$ctElz3m3PPybgwC9$058043977d46aa583e8190354e8eb9107a8680489cb59d78dd7de60c2e3994c85f67bcfb00551c3730e8abcdf9e10c841a66216645cd7e2e74f3cd3c94f1c535"
+    },
+    "rohanbansode": {
+        "email": "rohan@gmail.com",
+        "phone": "9156410765",
+        "password": "scrypt:32768:8:1$CBoKyTutnxdQZTNU$69de50cc8fe9b6c5cfb9b00dcb05e5e86853b60d8f264418e55013aa036dafcd527c903218140bff7b181e2e978bcf490164a4d7f61ee5f3a6e676cec681b6f5"
+    }
+}

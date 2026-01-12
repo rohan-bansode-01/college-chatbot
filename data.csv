@@ -1,0 +1,107 @@
+tag,question,answer
+admission,How to take admission?,Admissions start in June. Apply online through the college website.
+admission,What is the admission process?,"Fill application form, upload documents and pay fees."
+admission,When does admission start?,Admissions usually start in June every year.
+admission,Is online admission available?,"Yes, online admission facility is available."
+admission,Is entrance exam required?,Some courses require entrance exams.
+admission,What documents are required for admission?,"Marksheet, caste certificate and Aadhaar card are required."
+admission,Is offline admission available?,"Yes, offline admission is available at college office."
+admission,Can I change course after admission?,"Yes, course change is allowed within first week."
+admission,Is admission merit based?,"Yes, admission is based on merit list."
+admission,Is admission open for diploma students?,"Yes, diploma students can apply."
+fees,What is the course fee?,"Average course fee is Rs 25,000 per year."
+fees,Is fee refundable?,Fees are refundable as per college rules.
+fees,Are installments allowed?,"Yes, installments are allowed for selected courses."
+fees,What is hostel fee?,"Hostel fee is Rs 30,000 per year."
+fees,Is scholarship available?,"Yes, government scholarships are available."
+fees,Is late fee fine applicable?,"Yes, late fee fine may be applicable."
+fees,What is exam fee?,"Exam fee is Rs 1,200 per semester."
+fees,Is library fee included?,"Yes, library fee is included in total fees."
+fees,Are fees different for reserved category?,"Yes, fees are lower for reserved categories."
+fees,How to pay college fees?,Fees can be paid online or at cash counter.
+courses,Which courses are available?,"BA, BSc, BCA, BCom, MSc courses are available."
+courses,Is BCA course available?,"Yes, BCA course is available."
+courses,Is MSc available?,"Yes, MSc is available in selected subjects."
+courses,What are UG courses?,"BA, BSc, BCA and BCom are UG courses."
+courses,What are PG courses?,MSc and MA are PG courses.
+courses,Is AI and Data Science course available?,"Yes, AI and Data Science course is available."
+courses,Is Computer Science course available?,"Yes, Computer Science course is available."
+courses,What is course duration?,UG courses are 3 years and PG courses are 2 years.
+courses,Are certificate courses available?,"Yes, short-term certificate courses are available."
+courses,Is distance learning available?,"No, distance learning is not available."
+exam,When is the exam conducted?,Exams are conducted in March and October.
+exam,Is exam online or offline?,Exams are conducted offline.
+exam,What is exam pattern?,Written exams with theory and practicals.
+exam,How to get hall ticket?,Hall ticket is available on student portal.
+exam,When are results declared?,Results are declared within 30 days.
+exam,What is passing criteria?,Minimum 40 percent marks required to pass.
+exam,Is revaluation facility available?,"Yes, revaluation facility is available."
+exam,What is backlog exam?,Backlog exam is for failed subjects.
+exam,How to apply for re exam?,Apply through exam section.
+exam,Is grace marks given?,"Yes, grace marks are given as per rules."
+timetable,Where can I find timetable?,Timetable is available on notice board and website.
+timetable,What is college timing?,College timing is 9 AM to 5 PM.
+timetable,Is Saturday working?,Saturday is half working day.
+timetable,When does college start?,College starts at 9 AM.
+timetable,Is timetable updated online?,"Yes, timetable is updated online."
+timetable,Is practical timetable separate?,"Yes, practical timetable is released separately."
+timetable,Where is exam timetable displayed?,Exam timetable is displayed on notice board.
+timetable,Is timetable sent on WhatsApp?,"Yes, timetable is shared in official groups."
+timetable,What is lunch break time?,Lunch break is from 1 PM to 2 PM.
+timetable,Is college open on Sunday?,"No, college is closed on Sunday."
+faculty,Who is the principal?,Dr. A. B. Patil is the principal.
+faculty,Are teachers experienced?,"Yes, teachers are highly qualified."
+faculty,How many faculty members are there?,There are more than 50 faculty members.
+faculty,Is guest faculty available?,"Yes, guest faculty is available."
+faculty,Can students contact teachers?,"Yes, during office hours."
+faculty,Who is HOD of Computer Department?,Dr. S. R. Kulkarni is HOD.
+faculty,Are faculty members PhD holders?,"Yes, many faculty members are PhD holders."
+faculty,Is faculty student ratio good?,"Yes, faculty student ratio is good."
+faculty,Are extra lectures conducted?,"Yes, extra lectures are conducted before exams."
+faculty,Is mentoring available?,"Yes, student mentoring is available."
+contact,What is college contact number?,College contact number is 020-12345678.
+contact,What is college email id?,College email id is college@gmail.com.
+contact,Where is college located?,College is located in Pune.
+contact,What is office timing?,Office timing is 10 AM to 4 PM.
+contact,Is helpdesk available?,"Yes, helpdesk is available."
+contact,Is college phone number active?,"Yes, phone number is active during office hours."
+contact,Can I visit college office?,"Yes, you can visit college office."
+contact,Is email support available?,"Yes, email support is available."
+contact,What is college website?,College website is www.college.edu.
+contact,Is WhatsApp support available?,"Yes, WhatsApp support is available."
+hostel,Is hostel available?,"Yes, separate hostel for boys and girls."
+hostel,Is hostel compulsory?,"No, hostel is optional."
+hostel,Is hostel safe?,"Yes, hostel is fully secure."
+hostel,What facilities hostel provides?,"WiFi, mess and security are provided."
+hostel,What is hostel capacity?,Hostel capacity is 200 students.
+hostel,Is mess compulsory?,"Yes, mess is compulsory for hostel students."
+hostel,What is mess timing?,Mess timing is 7 AM to 9 PM.
+hostel,Is hostel WiFi available?,"Yes, hostel WiFi is available."
+hostel,Are visitors allowed in hostel?,Visitors are allowed till evening.
+hostel,Is hostel under CCTV?,"Yes, hostel is under CCTV surveillance."
+scholarship,Is SC ST scholarship available?,"Yes, SC ST scholarships are available."
+scholarship,How to apply for scholarship?,Apply through MahaDBT portal.
+scholarship,Is merit scholarship available?,"Yes, merit scholarship is available."
+scholarship,When scholarship amount is received?,Scholarship amount is received in 2 to 3 months.
+scholarship,Is minority scholarship available?,"Yes, minority scholarship is available."
+scholarship,Is EBC scholarship available?,"Yes, EBC scholarship is available."
+scholarship,Is scholarship available for OBC?,"Yes, OBC scholarship is available."
+scholarship,Do general category students get scholarship?,"Yes, merit scholarship is available."
+scholarship,Is income certificate required?,"Yes, income certificate is required."
+scholarship,Can scholarship be renewed?,"Yes, scholarship can be renewed every year."
+library,Is library available?,"Yes, library is available."
+library,What are library timings?,Library timing is 9 AM to 6 PM.
+library,How many books are available?,"More than 20,000 books are available."
+library,Is digital library available?,"Yes, digital library is available."
+library,Can students issue books?,"Yes, students can issue books."
+placement,Is placement cell available?,"Yes, placement cell is available."
+placement,Which companies visit campus?,IT and core companies visit campus.
+placement,Is internship provided?,"Yes, internship opportunities are provided."
+placement,What is average package?,Average package is 3 LPA.
+placement,Is placement compulsory?,"No, placement is optional."
+college timing,college timing is 10 to 5
+is placement compulsory,yes but required above 7 CGPA
+myself,what is your name?,"my name is not defined".
+myself,your name?,"my name is not defined".
+india,who is pm of india?,"prime minister of india is narendra modi"
+student,how are you ai?,i am fine. what about you

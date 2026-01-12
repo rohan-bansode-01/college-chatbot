@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure Login & Register</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#6c63ff;
+  --secondary:#ff6584;
+  --glass:rgba(255,255,255,0.15);
+  --border:rgba(255,255,255,0.3);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at top,#203a43,#0f2027);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.container{
+  width:900px;
+  height:520px;
+  perspective:2000px;
+  max-width:100%;
+}
+
+.card{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 1s cubic-bezier(.4,.2,.2,1);
+}
+
+.container.active .card{
+  transform:rotateY(180deg);
+}
+
+.face{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  background:var(--glass);
+  backdrop-filter:blur(25px);
+  border:1px solid var(--border);
+  border-radius:20px;
+  display:flex;
+}
+
+.login-face{transform:rotateY(0);}
+.register-face{transform:rotateY(180deg);}
+
+.form{
+  width:50%;
+  padding:50px;
+}
+
+.form h2{color:#fff;}
+.form p{color:#ccc;margin-bottom:30px;}
+
+.form input{
+  width:100%;
+  padding:14px;
+  margin-bottom:15px;
+  border-radius:12px;
+  border:none;
+  background:#f8f5f5;
+  color:#030000;
+}
+
+.form input[readonly]{opacity:.6;}
+
+.form button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* Forgot + Admin row */
+.forgot{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.forgot a{
+  color:#eee;
+  font-size:13px;
+  text-decoration:none;
+}
+
+/* Admin button */
+.admin-btn{
+  padding:4px 12px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.35);
+  color:#fff !important;
+  font-size:11px;
+  font-weight:500;
+  backdrop-filter:blur(6px);
+  transition:all 0.25s ease;
+}
+
+.admin-btn:hover{
+  background:rgba(255,255,255,0.25);
+  transform:translateY(-1px);
+}
+
+/* Right Panel */
+.panel{
+  width:50%;
+  background:linear-gradient(135deg,#6c63ff,#3f3d56);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+  border-top-right-radius:20px;
+  border-bottom-right-radius:20px;
+  border:1px solid var(--border);
+  text-align:center;
+  padding:20px;
+}
+
+.panel h1{margin-bottom:10px;}
+.panel p{opacity:.9;}
+
+.panel button{
+  margin-top:25px;
+  padding:12px 35px;
+  border-radius:30px;
+  border:2px solid #fff;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .container{height:auto;}
+  .face{flex-direction:column;}
+  .form, .panel{width:100%; border-radius:0;}
+  .panel{border-radius:0 0 20px 20px;}
+}
+
+@media (max-width: 480px){
+  .form{padding:30px 20px;}
+  .panel h1{font-size:22px;}
+  .panel p{font-size:14px;}
+  .panel button{padding:10px 28px;}
+}
+</style>
+</head>
+
+<body>
+
+{% if error %}
+<script>alert("{{ error }}");</script>
+{% endif %}
+
+<div class="container" id="container">
+<div class="card">
+
+<!-- ================= LOGIN ================= -->
+<div class="face login-face">
+  <div class="form">
+    <h2>Login</h2>
+    <p>Login using Email or Phone</p>
+
+    <form method="POST" action="/login">
+      <input type="text" name="identity" placeholder="Email or Phone Number" required>
+      <input type="password" name="password" placeholder="Password" required>
+
+      <div class="forgot">
+        <a href="/change_password">Forgot password?</a>
+        <a href="/admin" class="admin-btn">Admin Login</a>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h1>Hello, Friend!</h1>
+    <p>New here? Create account</p>
+    <button onclick="toggle()">Register</button>
+  </div>
+</div>
+
+<!-- ================= REGISTER ================= -->
+<div class="face register-face">
+  <div class="form">
+    <h2>Create Account</h2>
+
+    <form method="POST" action="/register" onsubmit="return validateRegister()">
+      <input type="text" id="reg-username" name="username" placeholder="Username" required>
+      <input type="email" id="reg-email" name="email" placeholder="Email" required>
+      <input type="text" id="reg-phone" name="phone" placeholder="Phone Number" maxlength="10" required>
+
+      <input type="password" id="password" name="password" placeholder="Password" required oninput="lockIdentityFields()">
+      <input type="password" id="confirm" name="confirm" placeholder="Confirm Password" required>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h1>Welcome Back!</h1>
+    <p>Already have account?</p>
+    <button onclick="toggle()">Login</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+function toggle(){
+  document.getElementById("container").classList.toggle("active");
+}
+
+/* Lock Email & Phone after password starts */
+function lockIdentityFields(){
+  document.getElementById("reg-email").readOnly = true;
+  document.getElementById("reg-phone").readOnly = true;
+}
+
+/* Register Validation */
+function validateRegister(){
+  const phone = document.getElementById("reg-phone").value;
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm").value;
+
+  const phonePattern = /^[6-9]\d{9}$/;
+  if(!phonePattern.test(phone)){
+    alert("Enter valid 10-digit Indian phone number");
+    return false;
+  }
+
+  const strongPassword =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if(!strongPassword.test(password)){
+    alert("Password must contain:\n- 8 characters\n- Uppercase\n- Lowercase\n- Number\n- Special symbol");
+    return false;
+  }
+
+  if(password !== confirm){
+    alert("Passwords do not match");
+    return false;
+  }
+
+  return true;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Chat Logs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#020617,#0f172a,#020617);
+  color:white;
+  padding:30px;
+}
+
+/* Header */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+  padding:16px 20px;
+  border-radius:16px;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.header h2{
+  font-size:22px;
+}
+
+/* Back button */
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 20px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6,#06b6d4);
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  box-shadow:0 8px 20px rgba(37,99,235,0.35);
+  transition:.3s;
+}
+
+.back-btn:hover{
+  transform:translateY(-2px) scale(1.04);
+}
+
+/* Search */
+.search-global{
+  max-width:360px;
+  margin:0 auto 25px;
+}
+
+.search-global input{
+  width:100%;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  outline:none;
+  background:rgba(255,255,255,.08);
+  color:white;
+  backdrop-filter:blur(10px);
+}
+
+/* User card */
+.user-block{
+  margin-bottom:25px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+  overflow:hidden;
+  transition:.3s;
+}
+
+.user-block:hover{
+  transform:translateY(-3px);
+}
+
+/* User header */
+.user-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 20px;
+  cursor:pointer;
+  background:linear-gradient(135deg,rgba(37,99,235,.25),rgba(6,182,212,.15));
+}
+
+.username{
+  font-size:18px;
+  font-weight:600;
+  color:#93c5fd;
+}
+
+.count{
+  font-size:13px;
+  opacity:.8;
+}
+
+/* Content */
+.user-content{
+  padding:16px 20px;
+  display:block;
+}
+
+/* Table */
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td{
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  font-size:14px;
+}
+
+th{
+  text-align:left;
+  color:#c7d2fe;
+  font-weight:600;
+}
+
+tr{
+  transition:.2s;
+}
+
+tr:hover{
+  background:rgba(255,255,255,0.06);
+}
+
+/* Empty */
+.empty{
+  opacity:.7;
+  font-size:14px;
+}
+
+/* Footer */
+.footer{
+  margin-top:30px;
+  text-align:center;
+  opacity:.6;
+  font-size:12px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>💬 All User Chat Logs</h2>
+  <a href="/admin/dashboard" class="back-btn">⬅ Back</a>
+</div>
+
+<div class="search-global">
+  <input type="text" id="globalSearch" placeholder="Search in all chats..." onkeyup="searchAll()">
+</div>
+
+{% if chats and chats|length > 0 %}
+
+  {% for username, messages in chats.items() %}
+
+  <div class="user-block">
+
+    <div class="user-header" onclick="toggleUser(this)">
+      <div class="username">👤 {{ username }}</div>
+      <div class="count">Messages: {{ messages|length }} ⬇</div>
+    </div>
+
+    <div class="user-content">
+
+      {% if messages and messages|length > 0 %}
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+
+          {% for msg in messages %}
+          <tr>
+            <td class="q">{{ msg["question"] }}</td>
+            <td class="a">{{ msg["answer"] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% else %}
+        <div class="empty">No messages for this user.</div>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+  {% endfor %}
+
+{% else %}
+  <p>No chats found in system.</p>
+{% endif %}
+
+<div class="footer">
+  AI Chatbot Monitoring System
+</div>
+
+<script>
+/* Collapse user blocks */
+function toggleUser(header){
+  const content = header.nextElementSibling;
+  content.style.display = content.style.display === "none" ? "block" : "none";
+}
+
+/* Global search */
+function searchAll(){
+  const input = document.getElementById("globalSearch").value.toLowerCase();
+  const blocks = document.querySelectorAll(".user-block");
+
+  blocks.forEach(block=>{
+    let found = false;
+    const rows = block.querySelectorAll("tbody tr, tr");
+
+    rows.forEach(row=>{
+      const text = row.innerText.toLowerCase();
+      if(text.includes(input)){
+        row.style.display = "";
+        found = true;
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    block.style.display = found || input==="" ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>

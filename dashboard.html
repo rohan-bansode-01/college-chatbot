@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <button class="toggle-btn" onclick="toggleSidebar()">
+    <i class="fa fa-bars"></i>
+  </button>
+  <h3>Chats</h3>
+  <button onclick="createNewChat()">+ New Chat</button>
+  <input id="searchChat" placeholder="Search in chat..." oninput="searchInChat()">
+  <div class="chat-list" id="chatList"></div>
+</div>
+
+<!-- CHAT -->
+<div class="chat-container">
+<header>
+  <h2>Welcome, {{ user }}</h2>
+  <div class="header-right">
+    <button class="action-btn" onclick="savePDF()">save pdf</button>
+    <button class="action-btn" onclick="exportTXT()">text</button>
+    <button class="action-btn" onclick="renameChat()">🏷</button>
+    <button class="action-btn" onclick="openDelete()">🗑</button>
+    <button class="action-btn" onclick="openProfile()">👤</button>
+    <button 
+  onclick="location.href='/logout'"
+  style="
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid #ef4444;
+    background: transparent;
+    color: #ef4444;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+  "
+  onmouseover="
+    this.style.background='#ef4444';
+    this.style.color='white';
+    this.style.boxShadow='0 6px 18px rgba(239,68,68,.4)';
+    this.style.transform='translateY(-1px)';
+  "
+  onmouseout="
+    this.style.background='transparent';
+    this.style.color='#ef4444';
+    this.style.boxShadow='none';
+    this.style.transform='none';
+  "
+>
+  Logout
+</button>
+
+  </div>
+</header>
+
+<div class="chat-box" id="chatBox"></div>
+
+<div class="input-area">
+  <input id="user-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+  <button class="voice-btn" id="voiceBtn" onclick="startRecording()"><i class="fa fa-microphone"></i></button>
+  <button class="send-btn" onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+</div>
+</div>
+
+<!-- DELETE CHAT MODAL -->
+<div class="modal" id="deleteModal">
+  <div class="modal-box">
+    <h3>Delete Chat?</h3>
+    <p>This chat will be permanently deleted.</p>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeDelete()">Cancel</button>
+      <button class="delete" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal">
+  <div class="modal-box">
+    <div class="profile-icon"><i class="fa fa-user"></i></div>
+    <div class="profile-email">{{ user }}</div>
+    <div id="profileStats"></div>
+
+    <button class="profile-btn theme-btn" onclick="toggleTheme()">Toggle Theme</button>
+    <button class="profile-btn delete-btn" onclick="deleteAccount()">Delete Account</button>
+    <button class="profile-btn close-btn" onclick="closeProfile()">Close</button>
+  </div>
+</div>
+
+<script>
+/* ================= MULTI USER SAFE STORAGE ================= */
+
+const USER_ID = "{{ user }}";   // MUST be unique (email or id)
+const USER_KEY = "chat_user_" + USER_ID;
+
+/* Load chats of THIS USER ONLY */
+let chats = JSON.parse(localStorage.getItem(USER_KEY)) || [];
+
+/* First time user */
+if(chats.length === 0){
+  chats = [{ title:"New Chat", messages: [] }];
+  localStorage.setItem(USER_KEY, JSON.stringify(chats));
+}
+
+let active = 0;
+
+const chatBox = document.getElementById("chatBox");
+const chatList = document.getElementById("chatList");
+const sidebar = document.getElementById("sidebar");
+const voiceBtn = document.getElementById("voiceBtn");
+
+/* ---------- UTILS ---------- */
+function time(){ return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+function save(){ localStorage.setItem(USER_KEY, JSON.stringify(chats)); }
+
+function append(text,cls){
+  const d=document.createElement("div");
+  d.className="msg "+cls;
+
+  let controls="";
+  if(cls==="bot"){
+    controls = `
+      <div class="msg-tools">
+      </div>`;
+  }
+
+  d.innerHTML = `<div>${text}</div>${controls}<div class="time">${time()}</div>`;
+  chatBox.appendChild(d);
+  chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+/* ---------- SIDEBAR ---------- */
+function toggleSidebar(){ sidebar.classList.toggle("collapsed"); }
+
+function renderSidebar(){
+  chatList.innerHTML="";
+  chats.forEach((c,i)=>{
+    const d=document.createElement("div");
+    d.className="chat-item"+(i===active?" active":"");
+    d.innerText=c.title;
+    d.onclick=()=>{ active=i; renderChat(); renderSidebar(); };
+    chatList.appendChild(d);
+  });
+}
+
+/* ---------- CHAT ---------- */
+function renderChat(){
+  chatBox.innerHTML="";
+  chats[active].messages.forEach(m=>{
+    append(m.q,"user");
+    append(m.a,"bot");
+  });
+}
+
+function createNewChat(){
+  chats.unshift({title:"New Chat",messages:[]});
+  active=0;
+  save();
+  renderSidebar();
+  renderChat();
+}
+
+function sendMessage(){
+  const i=document.getElementById("user-input");
+  const msg=i.value.trim();
+  if(!msg)return;
+
+  if(!chats[active].messages.length){
+    chats[active].title = msg.split(" ").slice(0,3).join(" ");
+  }
+
+  append(msg,"user");
+  i.value="";
+
+  fetch("/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:msg})})
+  .then(r=>r.json())
+  .then(d=>{
+    append(d.reply,"bot");
+    chats[active].messages.push({q:msg,a:d.reply});
+    save();
+    renderSidebar();
+  });
+}
+
+/* ---------- VOICE ---------- */
+
+
+function startRecording(){
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Speech recognition not supported. Use Google Chrome.");
+    return;
+  }
+
+  const recognition = new webkitSpeechRecognition();
+
+  recognition.lang = "en-IN";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.start();
+
+  append(" Listening... ", "bot");
+
+  recognition.onresult = function(event){
+    const text = event.results[0][0].transcript;
+
+    console.log("VOICE:", text);
+
+    append(text, "user");
+
+    fetch("/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message: text })
+    })
+    .then(r => r.json())
+    .then(d => {
+      append(d.reply, "bot");
+      chats[active].messages.push({ q: text, a: d.reply });
+      save();
+      renderSidebar();
+    });
+  };
+
+  recognition.onerror = function(event){
+    console.error("VOICE ERROR:", event.error);
+
+    if(event.error === "no-speech"){
+      append(" No speech detected. Try again....", "bot");
+    } else if(event.error === "not-allowed"){
+      append("❌ Microphone permission denied.", "bot");
+    } else {
+      append(" Voice error: " + event.error, "bot");
+    }
+  };
+}
+
+
+/* ---------- EXTRAS ---------- */
+function copyText(btn){ navigator.clipboard.writeText(btn.parentElement.previousSibling.innerText); }
+function pinMsg(btn){ btn.closest(".msg").style.border="2px solid gold"; }
+function likeMsg(btn){ btn.innerText="👍✔"; }
+function dislikeMsg(btn){ btn.innerText="👎✔"; }
+
+function clearChat(){
+  if(!confirm("Clear this chat?")) return;
+  chats[active].messages=[];
+  save(); renderChat();
+}
+
+// ================= RENAME CHAT (PURE JS + CSS IN JS) =================
+
+// 1) Inject CSS dynamically
+(function injectRenameCSS() {
+  const css = `
+  .rename-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+  }
+
+  .rename-hidden { display: none; }
+
+  .rename-box {
+    background: #020617;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 14px;
+    width: 320px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    animation: renamePop 0.25s ease;
+    text-align: center;
+  }
+
+  .rename-box h3 {
+    margin-bottom: 10px;
+  }
+
+  .rename-box input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: #0f172a;
+    color: white;
+    font-size: 15px;
+  }
+
+  .rename-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .rename-actions button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .rename-primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+  }
+
+  @keyframes renamePop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes renameShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+  }
+
+  .rename-shake {
+    animation: renameShake 0.3s;
+  }
+  `;
+  const style = document.createElement("style");
+  style.innerHTML = css;
+  document.head.appendChild(style);
+})();
+
+// 2) Create modal HTML dynamically
+(function createRenameModal() {
+  if (document.getElementById("renameModalJS")) return;
+
+  const modal = document.createElement("div");
+  modal.id = "renameModalJS";
+  modal.className = "rename-modal rename-hidden";
+
+  modal.innerHTML = `
+    <div class="rename-box">
+      <h3>✏️ Rename Chat</h3>
+      <input type="text" id="renameInputJS" placeholder="Enter new chat name..." />
+      <div class="rename-actions">
+        <button onclick="closeRenameModalJS()">Cancel</button>
+        <button class="rename-primary" onclick="confirmRenameJS()">Save</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+})();
+
+// 3) Replace your old function with this
+function renameChat() {
+  if (typeof active === "undefined" || active === null) return;
+
+  const modal = document.getElementById("renameModalJS");
+  const input = document.getElementById("renameInputJS");
+
+  modal.classList.remove("rename-hidden");
+  input.value = chats[active].title || "";
+
+  setTimeout(() => input.focus(), 50);
+}
+
+// 4) Close modal
+function closeRenameModalJS() {
+  document.getElementById("renameModalJS").classList.add("rename-hidden");
+}
+
+// 5) Confirm rename
+function confirmRenameJS() {
+  const input = document.getElementById("renameInputJS");
+  const n = input.value.trim();
+
+  if (!n) {
+    input.classList.add("rename-shake");
+    setTimeout(() => input.classList.remove("rename-shake"), 300);
+    return;
+  }
+
+  chats[active].title = n;
+  save();
+  renderSidebar();
+  closeRenameModalJS();
+}
+
+// 6) Enter / Escape key support
+document.addEventListener("keydown", function(e) {
+  const modal = document.getElementById("renameModalJS");
+  if (!modal || modal.classList.contains("rename-hidden")) return;
+
+  if (e.key === "Enter") confirmRenameJS();
+  if (e.key === "Escape") closeRenameModalJS();
+});
+
+
+function exportTXT(){
+  let t="";
+  chats[active].messages.forEach(m=>{ t+="You: "+m.q+"\nBot: "+m.a+"\n\n"; });
+  const blob=new Blob([t],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=chats[active].title+".txt";
+  a.click();
+}
+
+function searchInChat(){
+  const q=document.getElementById("searchChat").value.toLowerCase();
+  document.querySelectorAll(".msg").forEach(m=>{
+    m.style.display = m.innerText.toLowerCase().includes(q) ? "block":"none";
+  });
+}
+
+/* ---------- DELETE ---------- */
+function openDelete(){ document.getElementById("deleteModal").style.display="flex"; }
+function closeDelete(){ document.getElementById("deleteModal").style.display="none"; }
+function confirmDelete(){
+  chats.splice(active,1);
+  if(!chats.length) chats=[{title:"New Chat",messages:[]}];
+  active=0;
+  save(); renderSidebar(); renderChat(); closeDelete();
+}
+
+/* ---------- PROFILE ---------- */
+function openProfile(){
+  let total=0; chats.forEach(c=>total+=c.messages.length);
+  document.getElementById("profileStats").innerHTML=`<p>Total Chats: ${chats.length}</p><p>Total Messages: ${total}</p>`;
+  document.getElementById("profileModal").style.display="flex";
+}
+function closeProfile(){ document.getElementById("profileModal").style.display="none"; }
+function deleteAccount(){
+  if(!confirm("Delete account?")) return;
+  fetch("/delete_account",{method:"POST"}).then(()=>{
+    localStorage.removeItem(USER_KEY);
+    window.location.href="/login";
+  });
+}
+
+/* ---------- THEME ---------- */
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  localStorage.setItem("theme",document.body.classList.contains("light"));
+}
+if(localStorage.getItem("theme")==="true"){ document.body.classList.add("light"); }
+
+/* ---------- PDF ---------- */
+function savePDF(){
+  const { jsPDF } = window.jspdf;
+  const pdf=new jsPDF();
+  let y=10;
+  chats[active].messages.forEach(m=>{
+    pdf.text("You: "+m.q,10,y); y+=8;
+    pdf.text("Bot: "+m.a,10,y); y+=10;
+  });
+  pdf.save(chats[active].title+".pdf");
+}
+
+
+
+
+/* ---------- INIT ---------- */
+renderSidebar();
+renderChat();
+</script>
+
+</body>
+</html>

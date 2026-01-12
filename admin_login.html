@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Secure Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f172a,#020617,#0f172a);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* Animated background blobs */
+.bg-shape{
+  position:absolute;
+  width:350px;
+  height:350px;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.4;
+  animation:float 12s infinite alternate;
+}
+
+.bg1{background:#2563eb; top:-100px; left:-100px;}
+.bg2{background:#7c3aed; bottom:-120px; right:-120px;}
+
+@keyframes float{
+  from{transform:translateY(0px);}
+  to{transform:translateY(40px);}
+}
+
+/* Glass Card */
+.login-card{
+  position:relative;
+  width:380px;
+  max-width:95%;
+  padding:40px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  z-index:10;
+}
+
+.shield{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  margin:0 auto 15px;
+  color:white;
+}
+
+.login-card h2{
+  text-align:center;
+  color:white;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#cbd5f5;
+  font-size:13px;
+  margin-bottom:30px;
+}
+
+/* Inputs */
+.form-group{
+  margin-bottom:16px;
+}
+
+.form-group input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  outline:none;
+  font-size:14px;
+  transition:.25s;
+}
+
+.form-group input::placeholder{
+  color:#c7d2fe;
+}
+
+.form-group input:focus{
+  border-color:#60a5fa;
+  box-shadow:0 0 0 3px rgba(96,165,250,.25);
+}
+
+/* Button */
+.login-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  font-size:15px;
+  margin-top:10px;
+  transition:.3s;
+}
+
+.login-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 25px rgba(99,102,241,.4);
+}
+
+/* Error */
+.error{
+  text-align:center;
+  color:#f87171;
+  margin-top:12px;
+  font-size:13px;
+}
+
+/* Footer */
+.footer-text{
+  text-align:center;
+  font-size:12px;
+  color:#c7d2fe;
+  margin-top:18px;
+  opacity:.8;
+}
+
+/* Responsive */
+@media(max-width:420px){
+  .login-card{
+    padding:28px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-shape bg1"></div>
+<div class="bg-shape bg2"></div>
+
+<div class="login-card">
+
+  <div class="shield">🛡️</div>
+
+  <h2>Admin Login</h2>
+  <div class="subtitle">Restricted access • Authorized personnel only</div>
+
+  <form method="POST">
+
+    <div class="form-group">
+      <input name="email" type="email" placeholder="Admin Email" required>
+    </div>
+
+    <div class="form-group">
+      <input name="password" type="password" placeholder="Password" required>
+    </div>
+
+    <button class="login-btn" type="submit">Secure Login</button>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+  </form>
+
+  <div class="footer-text">
+    AI System Administration Panel
+  </div>
+
+</div>
+
+</body>
+</html>

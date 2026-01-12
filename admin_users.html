@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Users</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#020617,#0f172a,#020617);
+  color:white;
+  padding:25px;
+}
+
+/* Header */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.header h2{
+  font-size:24px;
+}
+
+/* Premium badge */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  color:#fff;
+  background:linear-gradient(135deg,#2563eb,#3b82f6,#06b6d4);
+  box-shadow:0 6px 16px rgba(37,99,235,0.35);
+  position:relative;
+  overflow:hidden;
+}
+
+.badge::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:translateX(-100%);
+  animation:badgeShine 3s infinite;
+}
+
+@keyframes badgeShine{
+  to{ transform:translateX(100%); }
+}
+
+/* Back button */
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 20px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6,#06b6d4);
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(37,99,235,0.35);
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.back-btn::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent);
+  transition:0.6s;
+}
+
+.back-btn:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 12px 28px rgba(37,99,235,0.45);
+}
+
+.back-btn:hover::before{
+  left:100%;
+}
+
+.back-btn:active{
+  transform:scale(0.95);
+}
+
+/* Toolbar */
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.search-box{
+  flex:1;
+  max-width:320px;
+}
+
+.search-box input{
+  width:100%;
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  outline:none;
+  background:rgba(255,255,255,.08);
+  color:white;
+  backdrop-filter:blur(10px);
+}
+
+/* Table */
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+th, td{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  font-size:14px;
+}
+
+th{
+  text-align:left;
+  color:#c7d2fe;
+  cursor:pointer;
+}
+
+tr{
+  transition:.25s;
+}
+
+tr:hover{
+  background:rgba(255,255,255,0.08);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+/* Status */
+.status{
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  background:#22c55e;
+  color:#022c22;
+}
+
+/* Actions */
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.action-btn{
+  padding:7px 12px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:12px;
+  text-decoration:none;
+  transition:.25s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+
+.action-btn:hover{
+  transform:translateY(-2px) scale(1.05);
+  filter:brightness(1.1);
+}
+
+.action-btn:active{
+  transform:scale(.95);
+}
+
+.edit-btn{ background:#22c55e; color:#022c22; }
+.delete-btn{ background:#ef4444; color:white; }
+.view-btn{ background:#3b82f6; color:white; }
+.copy-btn{ background:#64748b; color:white; }
+
+/* Footer */
+.footer{
+  margin-top:20px;
+  text-align:center;
+  font-size:12px;
+  opacity:.6;
+}
+
+/* Responsive */
+@media(max-width:700px){
+  th:nth-child(3), td:nth-child(3){
+    display:none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h2>👥 Manage Users</h2>
+    <div class="badge">{{ users|length }} Users</div>
+  </div>
+  <a href="/admin/dashboard" class="back-btn">⬅ Back</a>
+</div>
+
+<div class="toolbar">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search username or email..." onkeyup="searchTable()">
+  </div>
+</div>
+
+<div class="table-wrap">
+<table id="userTable">
+<thead>
+<tr>
+  <th onclick="sortTable(0)">Username ⬍</th>
+  <th onclick="sortTable(1)">Email ⬍</th>
+  <th>Phone</th>
+  <th>Status</th>
+  <th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+{% for username, u in users.items() %}
+<tr>
+  <td class="username">{{ username }}</td>
+  <td>{{ u.email }}</td>
+  <td>{{ u.phone }}</td>
+  <td><span class="status">Active</span></td>
+  <td>
+    <div class="actions">
+
+      <a href="/admin/edit_user/{{ username }}" class="action-btn edit-btn">Edit</a>
+
+      <a href="/admin/chats?user={{ username }}" class="action-btn view-btn">Chats</a>
+
+      <button class="action-btn copy-btn" onclick="copyText('{{ username }}')">Copy</button>
+
+      <a href="/admin/delete_user/{{ username }}"
+         class="action-btn delete-btn"
+         onclick="return confirm('Delete this user permanently?')">
+         Delete
+      </a>
+
+    </div>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<div class="footer">
+  AI Chatbot User Management System
+</div>
+
+<script>
+function searchTable(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#userTable tbody tr");
+
+  rows.forEach(row=>{
+    const username = row.querySelector(".username").innerText.toLowerCase();
+    const email = row.cells[1].innerText.toLowerCase();
+    row.style.display = (username.includes(input) || email.includes(input)) ? "" : "none";
+  });
+}
+
+function sortTable(colIndex){
+  const table = document.getElementById("userTable");
+  let switching = true;
+  let dir = "asc";
+
+  while(switching){
+    switching = false;
+    const rows = table.rows;
+
+    for(let i=1; i<rows.length-1; i++){
+      let shouldSwitch = false;
+      let x = rows[i].getElementsByTagName("TD")[colIndex];
+      let y = rows[i+1].getElementsByTagName("TD")[colIndex];
+
+      if(dir=="asc" && x.innerText.toLowerCase() > y.innerText.toLowerCase()) shouldSwitch = true;
+      if(dir=="desc" && x.innerText.toLowerCase() < y.innerText.toLowerCase()) shouldSwitch = true;
+
+      if(shouldSwitch){
+        rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
+        switching = true;
+        break;
+      }
+    }
+
+    if(!switching && dir=="asc"){
+      dir = "desc";
+      switching = true;
+    }
+  }
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text);
+  alert("Copied: " + text);
+}
+</script>
+
+</body>
+</html>
